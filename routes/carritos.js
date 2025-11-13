@@ -1,16 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const {
-  listarCarritos,
-  crearCarrito,
-  actualizarCarrito,
-  eliminarCarrito,
-} = require('../controllers/carritos');
+const ctrl = require('../controllers/carritos');
+const { verificarToken, verificarAdmin } = require('../middlewares/auth');
 
-// Rutas protegidas
-router.get('/', listarCarritos);
-router.post('/', crearCarrito);
-router.put('/:id', actualizarCarrito);
-router.delete('/:id', eliminarCarrito);
+// Todos los usuarios registrados
+router.get('/', verificarToken, ctrl.listarCarritos);
+router.post('/', ctrl.crearCarrito); // no usar: se crea al registrarse
+router.put('/', verificarToken, ctrl.actualizarCarrito); // body contiene productoId, cantidad, accion
+router.delete('/:productoId', verificarToken, ctrl.eliminarProductoCarrito); // elimina el producto del carrito
 
 module.exports = router;
