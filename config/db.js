@@ -1,13 +1,16 @@
+// Conecta Mongoose a MongoDB, exporta función conectarDB.
 const mongoose = require('mongoose');
 
-const connectDB = async () => {
+const conectarDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('✅ Conectado a MongoDB correctamente');
-  } catch (error) {
-    console.error('❌ Error al conectar a MongoDB:', error.message);
+    const uri = process.env.MONGO_URI;
+    if (!uri) throw new Error('MONGO_URI no definido en .env');
+    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log('✅ Conectado a MongoDB');
+  } catch (err) {
+    console.error('❌ Error al conectar a MongoDB:', err.message);
     process.exit(1);
   }
 };
 
-module.exports = connectDB;
+module.exports = conectarDB;
