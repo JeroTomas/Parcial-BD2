@@ -74,7 +74,7 @@ const detalleUsuario = async (req, res) => {
   } catch (err) { res.status(500).json({ success:false, error: err.message }); }
 };
 
-// Actualiza los detalles del usuario
+// Actualizar el usuario
 const actualizarUsuario = async (req, res) => {
   try {
     // Si no es admin y está intentando actualizar otro usuario
@@ -88,35 +88,6 @@ const actualizarUsuario = async (req, res) => {
     if (!usuario) return res.status(404).json({ success:false, error: 'Usuario no encontrado' });
     res.json({ success:true, data: usuario });
   } catch (err) { res.status(500).json({ success:false, error: err.message }); }
-};
-
-// Cambiar contraseña
-const bcrypt = require('bcryptjs');
-const cambiarPassword = async (req, res) => {
-  try {
-    const { actual, nueva } = req.body;
-    // Validar datos obligatorios
-    if (!actual || !nueva) {
-      return res.status(400).json({ success: false, error: 'Debes ingresar la contraseña actual y la nueva.' });
-    }
-    // Buscar el usuario autenticado
-    const usuario = await Usuario.findById(req.usuario.id);
-    if (!usuario) {
-      return res.status(404).json({ success: false, error: 'Usuario no encontrado.' });
-    }
-    // Verificar la contraseña actual
-    const esValido = await usuario.compararPassword(actual);
-    if (!esValido) {
-      return res.status(400).json({ success: false, error: 'La contraseña actual es incorrecta.' });
-    }
-    // Hashear la nueva contraseña antes de guardarla
-    const hash = await bcrypt.hash(nueva, 10);
-    usuario.password = hash;
-    await usuario.save();
-    res.json({ success: true, message: 'Contraseña actualizada correctamente.' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-    }
 };
 
 // Elimina el usuario
@@ -134,4 +105,4 @@ const eliminarUsuario = async (req, res) => {
   } catch (err) { res.status(500).json({ success:false, error: err.message }); }
 };
 
-module.exports = { registrarUsuario, loginUsuario, listarUsuarios, detalleUsuario, actualizarUsuario, eliminarUsuario, cambiarPassword };
+module.exports = { registrarUsuario, loginUsuario, listarUsuarios, detalleUsuario, actualizarUsuario, eliminarUsuario };
