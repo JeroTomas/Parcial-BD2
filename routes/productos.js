@@ -1,20 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const {
-  listarProductos,
-  detalleProducto,
-  crearProducto,
-  actualizarProducto,
-  eliminarProducto,
-} = require('../controllers/productos');
+const ctrl = require('../controllers/productos');
+const { verificarToken, verificarAdmin } = require('../middlewares/auth');
 
-// Rutas públicas
-router.get('/', listarProductos);
-router.get('/:id', detalleProducto);
-
-// Rutas protegidas
-router.post('/', crearProducto);
-router.put('/:id', actualizarProducto);
-router.delete('/:id', eliminarProducto);
+router.get('/', ctrl.listarProductos);
+router.get('/:id', ctrl.detalleProducto);
+// Solo admin
+router.post('/', verificarToken, verificarAdmin, ctrl.crearProducto);
+router.put('/:id', verificarToken, verificarAdmin, ctrl.actualizarProducto);
+router.delete('/:id', verificarToken, verificarAdmin, ctrl.eliminarProducto);
 
 module.exports = router;
