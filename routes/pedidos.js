@@ -1,16 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const {
-  listarPedidos,
-  crearPedido,
-  actualizarPedido,
-  eliminarPedido,
-} = require('../controllers/pedidos');
+const ctrl = require('../controllers/pedidos');
+const { verificarToken, verificarAdmin } = require('../middlewares/auth');
 
-// Rutas protegidas
-router.get('/', listarPedidos);
-router.post('/', crearPedido);
-router.put('/:id', actualizarPedido);
-router.delete('/:id', eliminarPedido);
+router.post('/', verificarToken, ctrl.crearPedido); // Todos los usuarios pueden crear un pedido desde su carrito
+router.get('/user/:userId', verificarToken, ctrl.listarPedidosUsuario); // Dueño o admin
+// Solo admin
+router.get('/', verificarToken, verificarAdmin, ctrl.listarTodosPedidos);
+router.get('/stats/estado', verificarToken, verificarAdmin, ctrl.pedidosStatsPorEstado);
+router.put('/:id/estado', verificarToken, verificarAdmin, ctrl.actualizarEstadoPedido);
 
 module.exports = router;
